@@ -15,4 +15,6 @@ juce_add_gui_app(BeatVOX
 
 target_link_libraries(BeatVOX PRIVATE
         application
+        juce::juce_core
+        juce::juce_gui_basics
         )
