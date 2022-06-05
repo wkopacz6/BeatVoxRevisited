@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 #JUCE
 
 add_subdirectory(submodules/JUCE)
+add_subdirectory(source/utils)
+add_subdirectory(source/segmentation)
 
 #BeatVOX App
 juce_add_gui_app(BeatVOX
@@ -15,6 +17,8 @@ juce_add_gui_app(BeatVOX
 
 target_link_libraries(BeatVOX PRIVATE
         application
+        segmentation
+        utils
         juce::juce_core
         juce::juce_gui_basics
         )
