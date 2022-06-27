@@ -7,7 +7,6 @@
 OnsetDetection::OnsetDetection () : mFFT (mFftOrder),
                                     mMedianFilterVec (5, 0)
 {
-    mHannWindow = util::createHannWindowVector (mFFT.getSize ());
 }
 
 void OnsetDetection::extractNoveltyFunction (const juce::AudioBuffer<float>& audio)
@@ -34,9 +33,10 @@ void OnsetDetection::extractNoveltyFunction (const juce::AudioBuffer<float>& aud
     // Get FFTs
     for (auto i = 0; i < numOfFFTs; i++)
     {
-        for (auto j = 0; j < mFFT.getSize (); j++)
+        for (auto j = 0; j < mFFT.getSize () * 2; j++)
         {
-            currentFft[i] = mHannWindow[j] * audioReadPtr[j + i];
+            if (j < mFFT.getSize ())
+                currentFft[j] = mHannWindow[j] * audioReadPtr[j + i];
         }
 
         mFFT.performFrequencyOnlyForwardTransform (currentFft.data ());
@@ -55,31 +55,37 @@ void OnsetDetection::extractNoveltyFunction (const juce::AudioBuffer<float>& aud
         }
 
         // Take difference but do not allow difference < 0 (halfwave rectification)
-        for (auto j = 0; j < mNoveltyFunction.size (); j++)
+        for (auto j = 0; j < mFFT.getSize () / 2 + 1; j++)
         {
             if (currentFft[j] - previousFft[j] < 0)
                 squared = 0;
             else
                 // Square for RMS
                 squared = (currentFft[j] - previousFft[j]) * (currentFft[j] - previousFft[j]);
+            // Sum for mean for RMS
             sum += squared;
             // Copy currentFft val into previousFft val
             previousFft[j] = currentFft[j];
         }
+
         // Mean for RMS
-        mean = sum / static_cast<float>(mNoveltyFunction.size ());
+        mean = sum / static_cast<float>(mFFT.getSize () / 2 + 1);
+        sum = 0;
 
         // Sqrt for RMS and store
         mNoveltyFunction[i] = sqrt (mean);
-        if (mNoveltyFunction[i] > maxFluxVal)
+        if (std::abs (mNoveltyFunction[i]) > maxFluxVal)
             maxFluxVal = mNoveltyFunction[i];
     }
     // Normalize novelty function.
-    for (auto i = 0; i < mNoveltyFunction.size (); i++)
+    if (maxFluxVal > 0)
     {
-        mNoveltyFunction[i] /= maxFluxVal;
-        // Save novelty funtion values in zero padded adaptive threshold
-        mAdaptiveThreshold[i + 2] = mNoveltyFunction[i];
+        for (auto i = 0; i < mNoveltyFunction.size (); i++)
+        {
+            mNoveltyFunction[i] /= abs (maxFluxVal);
+            // Save novelty funtion values in zero padded adaptive threshold
+            mAdaptiveThreshold[i + 2] = mNoveltyFunction[i];
+        }
     }
 }
 
@@ -119,6 +125,7 @@ std::vector<float> OnsetDetection::detectOnsets (const juce::AudioBuffer<float>&
 {
     extractNoveltyFunction (audio);
     pickPeaks ();
+    util::convertIndicesToTimestamps (mPeaks.data (), kSampleRate, mHopLength);
     util::convertIndicesToTimestamps (mPeaks.data (), kSampleRate, mHopLength);
     util::convertTimestampsToSamples (mPeaks.data (), kSampleRate);
     return mPeaks;

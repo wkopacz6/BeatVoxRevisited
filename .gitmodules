@@ -1,6 +1,6 @@
 [submodule "JUCE"]
 	path = submodules/JUCE
 	url = https://github.com/juce-framework/JUCE.git
-[submodule "BoostTest"]
-    path = submodules/BoostTest
-    url = https://github.com/boostorg/test
+[submodule "submodules/googletest"]
+	path = submodules/googletest
+	url = https://github.com/google/googletest.git

@@ -22,7 +22,7 @@ public:
 private:
     static constexpr auto mFftOrder = 10; // The order of the fft; nfft = 2^order
     static constexpr auto mHopLength = 768;
-    std::vector<float> mHannWindow{};
+    const std::vector<float> mHannWindow = util::createHannWindowVector (1 << mFftOrder);
     std::vector<float> mMedianFilterVec;
 
     juce::dsp::FFT mFFT;
