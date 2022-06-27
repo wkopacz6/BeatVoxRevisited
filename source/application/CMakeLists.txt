@@ -1,6 +1,6 @@
-add_library(application INTERACE)
+add_library(application INTERFACE)
 
-target_sources(
+target_sources(application INTERFACE
         MainComponent.h
         MainComponent.cpp
-)
+        )
