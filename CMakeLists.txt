@@ -51,6 +51,7 @@ target_link_libraries(UnitTests PRIVATE
         gtest_main
         segmentation
         utils
+        mfcc
         juce::juce_core
         juce::juce_dsp
         juce::juce_audio_basics
