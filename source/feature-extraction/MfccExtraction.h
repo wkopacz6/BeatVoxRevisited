@@ -4,6 +4,8 @@
 
 #include "juce_dsp/juce_dsp.h"
 #include <algorithm>
+#include <vector>
+#include <iostream>
 #include "../utils/Utils.h"
 
 class MfccExtraction
@@ -22,25 +24,41 @@ private:
         return 700 * (std::pow (10, m / 2595) - 1);
     }
 
+    // Apply hann window to current frame
+    void applyHannWindow (void);
 
-    juce::dsp::FFT fft;
+    // Compute power spectrum
+    void computePowerSpectrum (void);
+
+    void generateMelFilterbanks (void);
+
+    void applyFilterbanks (void);
+
+    void generateDct (void);
+
+    void applyDct (void);
+
+
+    juce::dsp::FFT mFft;
+    // Frames gotten from segmentation need to be the same size as number of points in our FFT and mCurrent frame
     std::vector<float> mCurrentFrame;
+    std::vector<float> mPowerSpectrum;
     const std::vector<float> mHannMultiplier;
+    std::vector<std::vector<float>> mFilterBanks;
+    std::vector<std::vector<float>> mDct;
+    std::vector<float> mFbankCoeffs;
+    std::vector<float> mMfccs;
+
 
     const size_t mFs;
     const size_t mNumFft;
+    const size_t mNumMfccs;
+    const size_t mNumFilters;
 
 public:
-    MfccExtraction (int fftOrder, size_t samplingRate) :
-            fft (fftOrder),
-            mFs (samplingRate),
-            mNumFft (util::pow2 (fftOrder)),
-            mHannMultiplier (util::createHannWindowVector (util::pow2 (fftOrder)))
-    {
+    MfccExtraction (int fftOrder, size_t samplingRate, size_t numMfccs, size_t numFilters);
 
-    }
-
-    void extractFrame (float* data);
+    std::vector<float> extractFrame (float* data);
 
     void extract ();
 
