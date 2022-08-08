@@ -21,3 +21,12 @@ std::vector<float> util::createHannWindowVector (size_t fftSize)
     }
     return hannWindow;
 }
+
+size_t util::pow2 (unsigned int exp)
+{
+    auto result = 1;
+    for (unsigned i = 0; i < exp; ++i)
+        result *= 2;
+
+    return result;
+}

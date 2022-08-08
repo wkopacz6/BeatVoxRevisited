@@ -1,6 +1,8 @@
 //
 // Created by Walter Kopacz on 6/5/22.
 //
+#pragma once
+
 #include <gtest/gtest.h>
 #include "OnsetDetection.h"
 #include "juce_audio_basics/juce_audio_basics.h"

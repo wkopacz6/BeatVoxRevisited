@@ -1,6 +1,7 @@
 //
 // Created by Walter Kopacz on 7/31/22.
 //
+#pragma once
 
 #include "juce_dsp/juce_dsp.h"
 #include <algorithm>
@@ -58,7 +59,7 @@ private:
 public:
     MfccExtraction (int fftOrder, size_t samplingRate, size_t numMfccs, size_t numFilters);
 
-    std::vector<float> extractFrame (float* data);
+    std::vector<float> extractFrame (std::vector<float>& data);
 
     void extract ();
 

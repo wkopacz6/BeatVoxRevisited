@@ -16,7 +16,8 @@ MfccExtraction::MfccExtraction (int fftOrder, size_t samplingRate, size_t numMfc
         mMfccs (numMfccs),
         mFbankCoeffs (numFilters)
 {
-
+    generateMelFilterbanks ();
+    generateMelFilterbanks ();
 }
 
 void MfccExtraction::applyHannWindow ()
@@ -126,9 +127,9 @@ void MfccExtraction::applyFilterbanks ()
         mFbankCoeffs[i] = std::log (mFbankCoeffs[i]);
 }
 
-std::vector<float> MfccExtraction::extractFrame (float* data)
+std::vector<float> MfccExtraction::extractFrame (std::vector<float>& data)
 {
-    mCurrentFrame = std::vector<float> (data, data + (sizeof (data) / sizeof (data[0])));
+    mCurrentFrame = std::vector<float> (data);
 
     applyHannWindow ();
     computePowerSpectrum ();

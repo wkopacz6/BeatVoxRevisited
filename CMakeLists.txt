@@ -16,6 +16,7 @@ add_subdirectory(submodules/JUCE)
 add_subdirectory(submodules/googletest)
 add_subdirectory(source/utils)
 add_subdirectory(source/segmentation)
+add_subdirectory(source/feature-extraction)
 
 #BeatVOX App
 juce_add_gui_app(BeatVOX
@@ -26,6 +27,7 @@ target_link_libraries(BeatVOX PRIVATE
         application
         segmentation
         utils
+        mfcc
         juce::juce_core
         juce::juce_gui_basics
         )
@@ -39,6 +41,7 @@ juce_add_console_app(UnitTests
 # Test source files
 target_sources(UnitTests PUBLIC
         source/segmentation/OnsetDetectionTest.cpp
+        source/feature-extraction/MfccExtractionTest.cpp
         )
 
 target_compile_definitions(UnitTests PUBLIC

@@ -37,13 +37,7 @@ namespace util
         }
     }
 
-    size_t pow2 (unsigned exp)
-    {
-        auto result = 1;
-        for (unsigned i = 0; i < exp; ++i)
-            result *= 2;
+    size_t pow2 (unsigned exp);
 
-        return result;
-    }
 
 }
